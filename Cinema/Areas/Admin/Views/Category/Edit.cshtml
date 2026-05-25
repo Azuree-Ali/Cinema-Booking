@@ -1,0 +1,161 @@
+﻿@model Category
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-8">
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+            <!-- Header -->
+            <div class="card-header bg-light border-bottom py-4 px-4">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="avatar avatar-xl">
+
+                        <div class="avatar-name rounded-circle bg-warning-subtle text-warning">
+
+                            <span>
+                                <i class="fas fa-edit"></i>
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <h4 class="mb-1 fw-bold text-dark">
+                            Edit Category
+                        </h4>
+
+                        <p class="text-600 mb-0 fs--1">
+                            Update category information from your cinema dashboard
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Form -->
+            <form method="post">
+
+                <div class="card-body p-4">
+
+                    <!-- Hidden Id -->
+                    <input type="hidden"
+                           name="Id"
+                           value="@Model.Id" />
+
+                    <!-- Name -->
+                    <div class="mb-4">
+
+                        <label class="form-label fw-semibold text-700">
+                            Category Name
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text bg-light border-end-0">
+
+                                <i class="fas fa-layer-group text-warning"></i>
+
+                            </span>
+
+                            <input type="text"
+                                   name="Name"
+                                   value="@Model.Name"
+                                   class="form-control border-start-0 shadow-none"
+                                   placeholder="Enter category name">
+
+                        </div>
+
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-4">
+
+                        <label class="form-label fw-semibold text-700">
+                            Description
+                        </label>
+
+                        <textarea name="Description"
+                                  rows="5"
+                                  class="form-control shadow-none"
+                                  placeholder="Write category description...">@Model.Description</textarea>
+
+                    </div>
+
+                    <!-- Status -->
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold text-700">
+                            Status
+                        </label>
+
+                        <select name="Status"
+                                class="form-select shadow-none">
+
+                            @if (Model.Status)
+                            {
+                                <option value="true" selected>
+                                    Active
+                                </option>
+
+                                <option value="false">
+                                    Inactive
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="true">
+                                    Active
+                                </option>
+
+                                <option value="false" selected>
+                                    Inactive
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="card-footer bg-light border-top px-4 py-3">
+
+                    <div class="d-flex justify-content-end gap-2">
+
+                        <!-- Back -->
+                        <a asp-action="Index"
+                           class="btn btn-falcon-default px-4">
+
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Back
+
+                        </a>
+
+                        <!-- Save -->
+                        <button type="submit"
+                                class="btn btn-warning text-white px-4">
+
+                            <i class="fas fa-save me-2"></i>
+                            Update Category
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
