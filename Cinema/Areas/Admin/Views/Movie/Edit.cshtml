@@ -1,0 +1,254 @@
+﻿@using Cinema.ViewModels
+@model EditMovieVM
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+            <div class="card-header bg-light border-bottom py-4 px-4">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="avatar avatar-xl">
+                        <div class="avatar-name rounded-circle bg-warning-subtle text-warning">
+                            <span>
+                                <i class="fas fa-edit"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="mb-1 fw-bold">
+                            Edit Movie
+                        </h4>
+
+                        <p class="text-600 mb-0 fs--1">
+                            Update movie information
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+
+                <input asp-for="Id" type="hidden" />
+
+                <div class="card-body p-4">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Movie Name
+                            </label>
+
+                            <input asp-for="Name"
+                                   class="form-control shadow-none">
+
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Price
+                            </label>
+
+                            <input asp-for="Price"
+                                   class="form-control shadow-none">
+
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Release Date
+                            </label>
+
+                            <input asp-for="DateTime"
+                                   type="datetime-local"
+                                   class="form-control shadow-none">
+
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Rating
+                            </label>
+
+                            <input asp-for="Rating"
+                                   class="form-control shadow-none">
+
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Category
+                            </label>
+
+                            <select name="CategoryId" class="form-select shadow-none">
+
+                                @foreach (var item in Model.Categories)
+                                {
+                                    <option value="@item.Id"
+                                            selected="@(Model.CategoryId == item.Id ? "selected" : null)">
+                                        @item.Name
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Cinema
+                            </label>
+
+                            <select name="CinemaId" class="form-select shadow-none">
+
+                                @foreach (var item in Model.Cinemas)
+                                {
+                                    <option value="@item.Id"
+                                            selected="@(Model.CinemaId == item.Id ? "selected" : null)">
+                                        @item.Name
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Status
+                            </label>
+
+                            <select asp-for="Status"
+                                    class="form-select shadow-none">
+
+                                <option value="true">
+                                    Active
+                                </option>
+
+                                <option value="false">
+                                    Inactive
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label fw-semibold">
+                                New Main Image
+                            </label>
+
+                            <input asp-for="MainImage"
+                                   type="file"
+                                   class="form-control">
+
+                        </div>
+
+                        <div class="col-12 mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Current Main Image
+                            </label>
+
+                            <div>
+                                <img src="~/Images/@Model.CurrentMainImage"
+                                     class="img-thumbnail"
+                                     style="width:180px;height:180px;object-fit:cover;">
+                            </div>
+
+                        </div>
+
+                        <div class="col-12 mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Add New Sub Images
+                            </label>
+
+                            <input asp-for="NewSubImages"
+                                   type="file"
+                                   multiple
+                                   class="form-control">
+
+                        </div>
+
+                        <div class="col-12 mb-4">
+
+                            <label class="form-label fw-semibold mb-3">
+                                Existing Sub Images
+                            </label>
+
+                            <div class="row">
+
+                                @foreach (var image in Model.ExistingSubImages)
+                                {
+                                    <div class="col-md-3 mb-3">
+
+                                        <img src="~/Images/@image.Img"
+                                             class="img-fluid rounded shadow-sm">
+
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-12 mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Description
+                            </label>
+
+                            <textarea asp-for="Description"
+                                      rows="5"
+                                      class="form-control shadow-none"></textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="card-footer bg-light border-top px-4 py-3">
+
+                    <div class="d-flex justify-content-end gap-2">
+
+                        <a asp-action="Index"
+                           class="btn btn-falcon-default">
+
+                            Back
+
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-warning">
+
+                            <i class="fas fa-save me-2"></i>
+                            Update Movie
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>

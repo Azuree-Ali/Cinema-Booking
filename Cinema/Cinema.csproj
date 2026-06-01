@@ -21,7 +21,9 @@
 	  <Folder Include="Areas\Admin\Data\" />
 	  <Folder Include="Areas\Admin\Models\" />
 	  <Folder Include="Controllers\" />
-	  <Folder Include="wwwroot\images\" />
+	  <Folder Include="wwwroot\images\Actors\" />
+	  <Folder Include="wwwroot\images\Cinemas\" />
+	  <Folder Include="wwwroot\images\Movies\Movie_SubImages\" />
 	</ItemGroup>
 
 </Project>

@@ -5,7 +5,7 @@
         MainImage  , 
         SubImage
     }
-    public class ProductService
+    public class MovieService
     {
         public string SaveFile(IFormFile ImageFile , ProductImageType productImageType = ProductImageType.MainImage)
         {
@@ -17,11 +17,11 @@
                 var filePath = ""; 
                 if (productImageType == ProductImageType.MainImage)
                 {
-                    filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images\\", fileName);
+                    filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\Movies", fileName);
                 }
                 else if (productImageType == ProductImageType.SubImage)
                 {
-                    filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images\\product_sub_images\\", fileName);
+                    filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\Movies\\Movie_SubImages\\", fileName);
                 }
 
                 using (var stream = System.IO.File.Create(filePath))
@@ -48,7 +48,7 @@
                 }
                 else if (productImageType == ProductImageType.SubImage)
                 {
-                    oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images\\product_sub_images\\", fileName);
+                    oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\Movies\\Movie_SubImages\\", fileName);
                 }
 
                 if (System.IO.File.Exists(oldPath))

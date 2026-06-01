@@ -1,6 +1,6 @@
 ﻿namespace Ecommerce529.Services
 {
-    public class CinemaService
+    public class ActorService
     {
         public string SaveFile(IFormFile ImageFile)
         {
@@ -9,7 +9,7 @@
                 //var fileName =  Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);  // folwer.jpg
                 var fileName = Guid.NewGuid().ToString() + "_" + ImageFile.FileName;
                 //var filePath = "D:\\EraaSoft\\529\\project\\Ecommerce529\\Ecommerce529\\wwwroot\\images\\brand_images\\";
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\Cinemas", fileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\Actors", fileName);
 
                 using (var stream = System.IO.File.Create(filePath))
                 {
@@ -28,7 +28,7 @@
         {
             try
             {
-                var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\", fileName);
+                var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\Actors", fileName);
 
                 if (System.IO.File.Exists(oldPath))
                 {

@@ -19,5 +19,6 @@ namespace Cinema.Models
         public int CinemaId { get; set; }
         [ForeignKey(nameof(CinemaId))]
         public Cinema Cinema { get; set; }
+        public List<MovieSubImages> SubImages { get; set; } = new();
     }
 }
