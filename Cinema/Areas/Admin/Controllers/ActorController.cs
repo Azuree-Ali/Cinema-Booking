@@ -6,23 +6,26 @@ using Cinema.Services;
 using Microsoft.AspNetCore.Mvc;
 using Ecommerce529.Services;
 using Microsoft.EntityFrameworkCore;
+using Cinema.Repositories;
 
 namespace Cinema.Areas.Admin.Controllers
 {
     [Area(CD.ADMIN_AREA)]
     public class ActorController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
+
+        private readonly IRepository<Actor> _actorRepository;
         private readonly ActorService _actorService;
 
-        public ActorController()
+        public ActorController(IRepository<Actor> actorRepository)
         {
-            _context = new ApplicationDbContext();
+            _actorRepository = actorRepository;
             _actorService = new ActorService();
         }
-        public IActionResult Index(string actorName, int page = 1)
+        public async Task<IActionResult> Index(string actorName, int page = 1)
         {
-            var actors = _context.Actors.AsQueryable();
+            var actors = await _actorRepository.GetAllAsync();
             //filter 
             if (actorName != null)
             {
@@ -46,7 +49,7 @@ namespace Cinema.Areas.Admin.Controllers
             return View(new Models.Cinema());
         }
         [HttpPost]
-        public IActionResult Create(CreateActorVM createActorVM)
+        public async Task<IActionResult> Create(CreateActorVM createActorVM)
         {
             if (!ModelState.IsValid)
             {
@@ -62,15 +65,15 @@ namespace Cinema.Areas.Admin.Controllers
                 var fileName = _actorService.SaveFile(createActorVM.ImageFile);
                 actor.Img = fileName;
             }
-            _context.Actors.Add(actor);
-            _context.SaveChanges();
+            await _actorRepository.CreateAsync(actor);
+            await _actorRepository.CommitAsync();
             TempData["Success"] = "Actor created successfully";
             return RedirectToAction(nameof(Index));
         }
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var actor = _context.Actors.FirstOrDefault(c => c.Id == id);
+            var actor = await _actorRepository.GetOneAsync(c => c.Id == id);
             if (actor is null)
             {
                 return NotFound();
@@ -78,10 +81,10 @@ namespace Cinema.Areas.Admin.Controllers
             return View(actor);
         }
         [HttpPost]
-        public IActionResult Edit(Actor actor , IFormFile ImageFile)
+        public async Task<IActionResult> Edit(Actor actor , IFormFile ImageFile)
         {
-         
-            var actorInDb = _context.Actors.AsNoTracking().FirstOrDefault(b => b.Id == actor.Id);
+
+            var actorInDb = await _actorRepository.GetOneAsync(b => b.Id == actor.Id);
             if (ImageFile != null && ImageFile.Length > 0)
             {
                 var fileName = _actorService.SaveFile(ImageFile);
@@ -93,21 +96,21 @@ namespace Cinema.Areas.Admin.Controllers
                 actor.Img = actorInDb.Img;
             }
 
-            _context.Actors.Update(actor);
-            _context.SaveChanges();
+            _actorRepository.Update(actor);
+            await _actorRepository.CommitAsync();
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var actor = _context.Actors.FirstOrDefault(c => c.Id == id);
+            var actor = await _actorRepository.GetOneAsync(c => c.Id == id);
 
             if (actor is null)
             {
                 return NotFound();
             }
             _actorService.RemoveFile(actor.Img);
-            _context.Actors.Remove(actor);
-            _context.SaveChanges();
+            _actorRepository.Delete(actor);
+            await _actorRepository.CommitAsync();
             return RedirectToAction(nameof(Index));
 
         }

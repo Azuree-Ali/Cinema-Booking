@@ -44,7 +44,7 @@
                 var oldPath = ""; 
                 if (productImageType == ProductImageType.MainImage)
                 {
-                    oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images\\", fileName);
+                    oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\Movies\\", fileName);
                 }
                 else if (productImageType == ProductImageType.SubImage)
                 {

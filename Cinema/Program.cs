@@ -1,3 +1,9 @@
+using Cinema.DataAccess;
+using Cinema.Models;
+using Cinema.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+
 namespace Cinema
 {
     public class Program
@@ -8,6 +14,18 @@ namespace Cinema
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string" + " 'DefaultConnection' not found");
+
+            builder.Services.AddDbContext<ApplicationDbContext>(
+                options => options.UseSqlServer(connectionString));
+
+            builder.Services.AddScoped<IRepository<Movie>, Repository<Movie>>();
+            builder.Services.AddScoped<IRepository<Category>, Repository<Category>>();
+            builder.Services.AddScoped<IRepository<Models.Cinema>, Repository<Models.Cinema>>();
+            builder.Services.AddScoped<IRepository<Actor>, Repository<Actor>>();
+            builder.Services.AddScoped<IMovieSubImagesRepository, MovieSubImagesRepository>();
 
             var app = builder.Build();
 
@@ -27,7 +45,7 @@ namespace Cinema
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{area=Admin}/{controller=Category}/{action=Index}/{id?}")
+                pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
             app.Run();

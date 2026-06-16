@@ -6,23 +6,25 @@ using Cinema.Services;
 using Microsoft.AspNetCore.Mvc;
 using Ecommerce529.Services;
 using Microsoft.EntityFrameworkCore;
+using Cinema.Repositories;
 
 namespace Cinema.Areas.Admin.Controllers
 {
     [Area(CD.ADMIN_AREA)]
     public class CinemaController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
+        private readonly IRepository<Models.Cinema> _cinemaRepository;
         private readonly CinemaService _cinemaService;
 
-        public CinemaController()
+        public CinemaController(IRepository<Models.Cinema> cinemaRepository)
         {
-            _context = new ApplicationDbContext();
+            _cinemaRepository = cinemaRepository;
             _cinemaService = new CinemaService();
         }
-        public IActionResult Index(string cinemaName, int page = 1)
+        public async Task<IActionResult> Index(string cinemaName, int page = 1)
         {
-            var cinemas = _context.Cinemas.AsQueryable();
+            var cinemas = await _cinemaRepository.GetAllAsync();
             //filter 
             if (cinemaName != null)
             {
@@ -46,7 +48,7 @@ namespace Cinema.Areas.Admin.Controllers
             return View(new Models.Cinema());
         }
         [HttpPost]
-        public IActionResult Create(CreateCinemaVM createCinemaVM)
+        public async Task<IActionResult> Create(CreateCinemaVM createCinemaVM)
         {
             if (!ModelState.IsValid)
             {
@@ -64,15 +66,15 @@ namespace Cinema.Areas.Admin.Controllers
                 var fileName = _cinemaService.SaveFile(createCinemaVM.ImageFile);
                 cinema.Img = fileName;
             }
-            _context.Cinemas.Add(cinema);
-            _context.SaveChanges();
+            await _cinemaRepository.CreateAsync(cinema);
+            await _cinemaRepository.CommitAsync();
             TempData["Success"] = "Cinema created successfully";
             return RedirectToAction(nameof(Index));
         }
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var cinemas = _context.Cinemas.FirstOrDefault(c => c.Id == id);
+            var cinemas = await _cinemaRepository.GetOneAsync(c => c.Id == id);
             if (cinemas is null)
             {
                 return NotFound();
@@ -80,13 +82,13 @@ namespace Cinema.Areas.Admin.Controllers
             return View(cinemas);
         }
         [HttpPost]
-        public IActionResult Edit(Models.Cinema cinema , IFormFile ImageFile)
+        public async Task<IActionResult> Edit(Models.Cinema cinema, IFormFile ImageFile)
         {
             if (!ModelState.IsValid)
             {
                 return View(cinema);
-            }
-            var cinemaInDb = _context.Cinemas.AsNoTracking().FirstOrDefault(b => b.Id == cinema.Id);
+            } 
+            var cinemaInDb = await _cinemaRepository.GetOneAsync(b => b.Id == cinema.Id);
             if (ImageFile != null && ImageFile.Length > 0)
             {
                 var fileName = _cinemaService.SaveFile(ImageFile);
@@ -98,21 +100,21 @@ namespace Cinema.Areas.Admin.Controllers
                 cinema.Img = cinemaInDb.Img;
             }
 
-            _context.Cinemas.Update(cinema);
-            _context.SaveChanges();
+            _cinemaRepository.Update(cinema);
+            await _cinemaRepository.CommitAsync();
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var cinema = _context.Cinemas.FirstOrDefault(c => c.Id == id);
+            var cinema = await _cinemaRepository.GetOneAsync(c => c.Id == id);
 
             if (cinema is null)
             {
                 return NotFound();
             }
             _cinemaService.RemoveFile(cinema.Img);
-            _context.Cinemas.Remove(cinema);
-            _context.SaveChanges();
+            _cinemaRepository.Delete(cinema);
+            await _cinemaRepository.CommitAsync();
             return RedirectToAction(nameof(Index));
 
         }
