@@ -1,8 +1,12 @@
 using Cinema.DataAccess;
 using Cinema.Models;
 using Cinema.Repositories;
+using Cinema.Utilities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+
 
 namespace Cinema
 {
@@ -20,12 +24,23 @@ namespace Cinema
 
             builder.Services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(connectionString));
+            
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
+                Options =>
+                {
+                    Options.User.RequireUniqueEmail = true;
+                    Options.SignIn.RequireConfirmedEmail = true;
+                }
+                )
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             builder.Services.AddScoped<IRepository<Movie>, Repository<Movie>>();
             builder.Services.AddScoped<IRepository<Category>, Repository<Category>>();
             builder.Services.AddScoped<IRepository<Models.Cinema>, Repository<Models.Cinema>>();
             builder.Services.AddScoped<IRepository<Actor>, Repository<Actor>>();
             builder.Services.AddScoped<IMovieSubImagesRepository, MovieSubImagesRepository>();
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             var app = builder.Build();
 
