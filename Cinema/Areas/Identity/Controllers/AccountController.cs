@@ -55,6 +55,7 @@ namespace Cinema.Areas.Identity.Controllers
                 }
                 return View(registerVM);
             }
+            await _userManager.AddToRoleAsync(user, CD.CUSTOMER_ROLE);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var link = Url.Action(nameof(ConfirmEmail), "Account", new { area = CD.IDENTITY_AREA, userId = user.Id, token } , Request.Scheme);
             await _emailSender.SendEmailAsync(registerVM.Email,

@@ -45,6 +45,12 @@ namespace Cinema
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddTransient<IDbInitializer, DbInitializer>();
 
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            });
+
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())

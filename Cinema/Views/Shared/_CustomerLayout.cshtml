@@ -157,6 +157,39 @@
 
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
+                        @if (User.IsInRole(CD.SUPER_ADMIN_ROLE))
+                        {
+                            <li class="nav-item">
+
+                                <a asp-area="@CD.ADMIN_AREA"
+                                   asp-controller="Category"
+                                   asp-action="Index"
+                                   class="btn btn-danger">
+
+                                    <i class="fas fa-crown me-1"></i>
+                                    Super Admin
+
+                                </a>
+
+                            </li>
+                        }
+                        else if (User.IsInRole(CD.ADMIN_ROLE))
+                        {
+                            <li class="nav-item">
+
+                                <a asp-area="@CD.ADMIN_AREA"
+                                   asp-controller="Category"
+                                   asp-action="Index"
+                                   class="btn btn-warning">
+
+                                    <i class="fas fa-user-shield me-1"></i>
+                                    Admin Panel
+
+                                </a>
+
+                            </li>
+                        }
+
                         <li class="nav-item">
 
                             <span class="nav-link fw-semibold text-dark">
@@ -175,6 +208,8 @@
                                   asp-area="@CD.IDENTITY_AREA"
                                   asp-controller="Account"
                                   asp-action="Logout">
+
+                                @Html.AntiForgeryToken()
 
                                 <button type="submit"
                                         class="btn btn-outline-danger">
@@ -230,7 +265,7 @@
 
     </nav>
 
-    <!-- Page Content -->
+    <!-- Content -->
     <main class="container py-4">
 
         @RenderBody()
