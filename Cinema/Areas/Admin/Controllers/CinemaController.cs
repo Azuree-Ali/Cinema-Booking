@@ -1,16 +1,18 @@
 ﻿using Cinema.DataAccess;
 using Cinema.Models;
-using Cinema.Utilities;
-using Cinema.Services;
-using Cinema.Services;
-using Microsoft.AspNetCore.Mvc;
-using Ecommerce529.Services;
-using Microsoft.EntityFrameworkCore;
 using Cinema.Repositories;
+using Cinema.Services;
+using Cinema.Services;
+using Cinema.Utilities;
+using Ecommerce529.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cinema.Areas.Admin.Controllers
 {
     [Area(CD.ADMIN_AREA)]
+    [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}  , {CD.EMPLOYEE_ROLE}")]
     public class CinemaController : Controller
     {
         //private readonly ApplicationDbContext _context;
@@ -43,10 +45,14 @@ namespace Cinema.Areas.Admin.Controllers
 
         }
         [HttpGet]
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         public IActionResult Create()
         {
             return View(new Models.Cinema());
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateCinemaVM createCinemaVM)
         {
@@ -71,6 +77,8 @@ namespace Cinema.Areas.Admin.Controllers
             TempData["Success"] = "Cinema created successfully";
             return RedirectToAction(nameof(Index));
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -81,6 +89,8 @@ namespace Cinema.Areas.Admin.Controllers
             }
             return View(cinemas);
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         [HttpPost]
         public async Task<IActionResult> Edit(Models.Cinema cinema, IFormFile ImageFile)
         {
@@ -104,6 +114,8 @@ namespace Cinema.Areas.Admin.Controllers
             await _cinemaRepository.CommitAsync();
             return RedirectToAction(nameof(Index));
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         public async Task<IActionResult> Delete(int id)
         {
             var cinema = await _cinemaRepository.GetOneAsync(c => c.Id == id);

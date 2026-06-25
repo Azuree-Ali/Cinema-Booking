@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using Ecommerce529.Services;
 using Microsoft.EntityFrameworkCore;
 using Cinema.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cinema.Areas.Admin.Controllers
 {
     [Area(CD.ADMIN_AREA)]
+    [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}  , {CD.EMPLOYEE_ROLE}")]
     public class ActorController : Controller
     {
         //private readonly ApplicationDbContext _context;
@@ -44,11 +46,15 @@ namespace Cinema.Areas.Admin.Controllers
 
         }
         [HttpGet]
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         public IActionResult Create()
         {
             return View(new Models.Cinema());
         }
         [HttpPost]
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         public async Task<IActionResult> Create(CreateActorVM createActorVM)
         {
             if (!ModelState.IsValid)
@@ -71,6 +77,8 @@ namespace Cinema.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
         [HttpGet]
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         public async Task<IActionResult> Edit(int id)
         {
             var actor = await _actorRepository.GetOneAsync(c => c.Id == id);
@@ -80,6 +88,8 @@ namespace Cinema.Areas.Admin.Controllers
             }
             return View(actor);
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         [HttpPost]
         public async Task<IActionResult> Edit(Actor actor , IFormFile ImageFile)
         {
@@ -100,6 +110,8 @@ namespace Cinema.Areas.Admin.Controllers
             await _actorRepository.CommitAsync();
             return RedirectToAction(nameof(Index));
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         public async Task<IActionResult> Delete(int id)
         {
             var actor = await _actorRepository.GetOneAsync(c => c.Id == id);

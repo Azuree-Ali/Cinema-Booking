@@ -1,13 +1,15 @@
 ﻿using Cinema.DataAccess;
 using Cinema.Models;
-using Cinema.Utilities;
-using Cinema.Services;
-using Microsoft.AspNetCore.Mvc;
 using Cinema.Repositories;
+using Cinema.Services;
+using Cinema.Utilities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Cinema.Areas.Admin.Controllers
 {
     [Area(CD.ADMIN_AREA)]
+    [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}  , {CD.EMPLOYEE_ROLE}")]
     public class CategoryController : Controller
     {
         //private readonly ApplicationDbContext _context;
@@ -38,10 +40,14 @@ namespace Cinema.Areas.Admin.Controllers
             
         }
         [HttpGet]
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         public IActionResult Create()
         {
             return View(new Category());
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         [HttpPost]
         public async Task<IActionResult> Create(Category category)
         {
@@ -55,6 +61,8 @@ namespace Cinema.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
         [HttpGet]
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         public async Task<IActionResult> Edit(int id)
         {
             //var category = _context.Categories.FirstOrDefault(c=>c.Id == id);
@@ -65,6 +73,8 @@ namespace Cinema.Areas.Admin.Controllers
             }
             return View(category);
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         [HttpPost]
         public async Task<IActionResult> Edit(Category category)
         {
@@ -76,6 +86,8 @@ namespace Cinema.Areas.Admin.Controllers
             await _categoryRepository.CommitAsync();
             return RedirectToAction(nameof(Index));
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         public async Task<IActionResult> Delete(int id)
         {
             var category = await _categoryRepository.GetOneAsync(c => c.Id == id);

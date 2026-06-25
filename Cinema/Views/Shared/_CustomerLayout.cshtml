@@ -1,7 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using Cinema.Utilities
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -10,30 +13,56 @@
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- FontAwesome -->
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
     <style>
+
         body {
             background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .navbar {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 15px rgba(0,0,0,.08);
         }
 
-        .movie-card img {
-            height: 320px;
-            object-fit: cover;
+        .navbar-brand {
+            font-size: 1.4rem;
         }
+
+        .nav-link {
+            font-weight: 500;
+            transition: .3s;
+        }
+
+            .nav-link:hover {
+                color: #0d6efd !important;
+            }
 
         .movie-card {
-            transition: 0.3s;
+            transition: .3s;
         }
 
             .movie-card:hover {
                 transform: translateY(-5px);
             }
+
+            .movie-card img {
+                height: 320px;
+                object-fit: cover;
+            }
+
+        main {
+            flex: 1;
+        }
+
+        footer {
+            margin-top: auto;
+        }
+
     </style>
 
 </head>
@@ -41,57 +70,193 @@
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-white sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+
         <div class="container">
 
-            <a class="navbar-brand fw-bold text-primary" href="/">
+            <a class="navbar-brand fw-bold text-primary"
+               asp-area="@CD.CUSTOMER_AREA"
+               asp-controller="Home"
+               asp-action="Index">
+
                 🎬 Cinema
+
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarCinema">
+
                 <span class="navbar-toggler-icon"></span>
+
             </button>
 
-            <div class="collapse navbar-collapse" id="nav">
+            <div class="collapse navbar-collapse"
+                 id="navbarCinema">
 
-                <ul class="navbar-nav ms-auto gap-2">
+                <!-- Left Menu -->
+                <ul class="navbar-nav me-auto">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+
+                        <a class="nav-link"
+                           asp-area="@CD.CUSTOMER_AREA"
+                           asp-controller="Home"
+                           asp-action="Index">
+
+                            Home
+
+                        </a>
+
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/Movie/Index">Movies</a>
+
+                        <a class="nav-link"
+                           asp-area="@CD.CUSTOMER_AREA"
+                           asp-controller="Movie"
+                           asp-action="Index">
+
+                            Movies
+
+                        </a>
+
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/Cinema/Index">Cinemas</a>
+
+                        <a class="nav-link"
+                           asp-area="@CD.CUSTOMER_AREA"
+                           asp-controller="Cinema"
+                           asp-action="Index">
+
+                            Cinemas
+
+                        </a>
+
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/Category/Index">Categories</a>
+
+                        <a class="nav-link"
+                           asp-area="@CD.CUSTOMER_AREA"
+                           asp-controller="Category"
+                           asp-action="Index">
+
+                            Categories
+
+                        </a>
+
                     </li>
+
+                </ul>
+
+                <!-- Right Menu -->
+                <ul class="navbar-nav align-items-center gap-2">
+
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+
+                            <span class="nav-link fw-semibold text-dark">
+
+                                <i class="fas fa-user-circle me-1"></i>
+
+                                @User.Identity.Name
+
+                            </span>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <form method="get"
+                                  asp-area="@CD.IDENTITY_AREA"
+                                  asp-controller="Account"
+                                  asp-action="Logout">
+
+                                <button type="submit"
+                                        class="btn btn-outline-danger">
+
+                                    <i class="fas fa-sign-out-alt me-1"></i>
+
+                                    Logout
+
+                                </button>
+
+                            </form>
+
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+
+                            <a asp-area="@CD.IDENTITY_AREA"
+                               asp-controller="Account"
+                               asp-action="Login"
+                               class="btn btn-outline-primary">
+
+                                <i class="fas fa-sign-in-alt me-1"></i>
+
+                                Login
+
+                            </a>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <a asp-area="@CD.IDENTITY_AREA"
+                               asp-controller="Account"
+                               asp-action="Register"
+                               class="btn btn-primary">
+
+                                <i class="fas fa-user-plus me-1"></i>
+
+                                Register
+
+                            </a>
+
+                        </li>
+                    }
 
                 </ul>
 
             </div>
 
         </div>
+
     </nav>
 
-    <!-- Content -->
+    <!-- Page Content -->
     <main class="container py-4">
+
         @RenderBody()
+
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white text-center py-3 border-top">
-        <small class="text-muted">
-            © @DateTime.Now.Year Cinema System
-        </small>
+    <footer class="bg-white border-top py-3">
+
+        <div class="container text-center">
+
+            <small class="text-muted">
+
+                © @DateTime.Now.Year Cinema System - All Rights Reserved
+
+            </small>
+
+        </div>
+
     </footer>
 
+    <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    @await RenderSectionAsync("Scripts", required: false)
+
 </body>
+
 </html>

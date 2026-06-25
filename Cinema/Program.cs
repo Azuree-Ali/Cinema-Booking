@@ -2,6 +2,7 @@ using Cinema.DataAccess;
 using Cinema.Models;
 using Cinema.Repositories;
 using Cinema.Utilities;
+using Cinema.Utilities.DbInitializer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ namespace Cinema
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -39,10 +40,18 @@ namespace Cinema
             builder.Services.AddScoped<IRepository<Category>, Repository<Category>>();
             builder.Services.AddScoped<IRepository<Models.Cinema>, Repository<Models.Cinema>>();
             builder.Services.AddScoped<IRepository<Actor>, Repository<Actor>>();
+            builder.Services.AddScoped<IRepository<ApplicationUserOTP>, Repository<ApplicationUserOTP>>();
             builder.Services.AddScoped<IMovieSubImagesRepository, MovieSubImagesRepository>();
             builder.Services.AddTransient<IEmailSender, EmailSender>();
+            builder.Services.AddTransient<IDbInitializer, DbInitializer>();
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+                await dbInitializer.InitializeAsync();
+            }
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

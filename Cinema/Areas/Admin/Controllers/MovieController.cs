@@ -4,6 +4,7 @@ using Cinema.Repositories;
 using Cinema.Utilities;
 using Cinema.ViewModels;
 using Ecommerce529.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -11,6 +12,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace Cinema.Areas.Admin.Controllers
 {
     [Area(CD.ADMIN_AREA)]
+    [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}  , {CD.EMPLOYEE_ROLE}")]
     public class MovieController : Controller
     {
         //private readonly ApplicationDbContext _context;
@@ -64,6 +66,8 @@ namespace Cinema.Areas.Admin.Controllers
             movieVM.CurrentPage = page;
             return View(movieVM);
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -74,6 +78,8 @@ namespace Cinema.Areas.Admin.Controllers
             };
             return View(vm);
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateMovieVM createMovieVM)
         {
@@ -112,6 +118,8 @@ namespace Cinema.Areas.Admin.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -138,6 +146,8 @@ namespace Cinema.Areas.Admin.Controllers
 
             return View(vm);
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         [HttpPost]
         public async Task<IActionResult> Edit(EditMovieVM vm)
         {
@@ -197,6 +207,8 @@ namespace Cinema.Areas.Admin.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+        [Authorize(Roles = $" {CD.SUPER_ADMIN_ROLE} , {CD.ADMIN_ROLE}")]
+
         public async Task<IActionResult> Delete(int id)
         {
             var movie = await _movieRepository.GetOneAsync(m => m.Id == id, includes: [m => m.SubImages]);

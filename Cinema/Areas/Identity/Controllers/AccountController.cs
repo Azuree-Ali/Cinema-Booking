@@ -1,4 +1,5 @@
 ﻿using Cinema.Models;
+using Cinema.Repositories;
 using Cinema.Utilities;
 using Cinema.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -13,13 +14,15 @@ namespace Cinema.Areas.Identity.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IRepository<ApplicationUserOTP> _applicationUserOtpRepository;
         private readonly IEmailSender _emailSender;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, IRepository<ApplicationUserOTP> applicationUserOtpRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _applicationUserOtpRepository = applicationUserOtpRepository;
         }
 
         [HttpGet]
@@ -62,6 +65,10 @@ namespace Cinema.Areas.Identity.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if(User.Identity.IsAuthenticated) 
+            {
+                return RedirectToAction("Index", "Home", new { area = CD.CUSTOMER_AREA });
+            }
             return View();
         }
         [HttpPost]
@@ -96,6 +103,12 @@ namespace Cinema.Areas.Identity.Controllers
                 return View(loginVM);
             }
             return RedirectToAction("Index", "Home", new { area = CD.CUSTOMER_AREA,});
+        }
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(Login));
         }
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string userId , string token)
@@ -143,6 +156,103 @@ namespace Cinema.Areas.Identity.Controllers
                 );
 
             return RedirectToAction(nameof(Login));
+        }
+        [HttpGet]
+        public IActionResult ForgetPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordVM forgetPasswordVM)
+        {
+            var user = await _userManager.FindByEmailAsync(forgetPasswordVM.UserNameOrEmail) ??
+                await _userManager.FindByNameAsync(forgetPasswordVM.UserNameOrEmail);
+
+            if (user is null)
+            {
+                ModelState.AddModelError("", "Invalid UserName or Email");
+                return View(forgetPasswordVM);
+            }
+
+            var otp = new Random().Next(1000, 9999).ToString();
+
+            var applicationUserOtp = new ApplicationUserOTP(user.Id, otp);
+
+            await _applicationUserOtpRepository.CreateAsync(applicationUserOtp);
+            await _applicationUserOtpRepository.CommitAsync();
+            // send email 
+            await _emailSender.SendEmailAsync(
+               user.Email,
+               "Ecommerce Reset Password",
+               $"<h1>use this  <span style=\"color:red\">{otp}</span> as a otp to reset your password </h1>"
+               );
+
+            TempData["Success_Notification"] = "send Email Successfully";
+
+            return RedirectToAction(nameof(VerifyOTP), new { userId = user.Id });
+        }
+        [HttpGet]
+        public IActionResult VerifyOTP(string userId)
+        {
+            return View(new VerifyOTPVM() { UserId = userId });
+        }
+        [HttpPost]
+        public async Task<IActionResult> VerifyOTP(VerifyOTPVM verifyOTPVM)
+        {
+            var user = await _userManager.FindByIdAsync(verifyOTPVM.UserId);
+            if (user is null)
+            {
+                ModelState.AddModelError("", "invalid user");
+                return View(verifyOTPVM);
+            }
+            var otps = await _applicationUserOtpRepository.GetAllAsync(e =>
+                e.ApplicationUserId == user.Id &&
+                e.IsValid &&
+                e.ValidTo > DateTime.UtcNow
+            );
+            var otp = otps.OrderBy(e => e.CreatedAt).LastOrDefault();
+            if (otp is null || otp.OTP != verifyOTPVM.OTP)
+            {
+                ModelState.AddModelError("", "invalid / Expired OTP");
+                return View(verifyOTPVM);
+            }
+            otp.IsValid = false;
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            await _applicationUserOtpRepository.CommitAsync();
+
+
+            return RedirectToAction(nameof(ResetPassword), new { userId = user.Id, token = token });
+        }
+        [HttpGet]
+        public IActionResult ResetPassword(string userId, string token)
+        {
+            return View(new ResetPasswordVM() { UserId = userId, Token = token });
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordVM resetPasswordVM)
+        {
+            var user = await _userManager.FindByIdAsync(resetPasswordVM.UserId);
+            if (user is null)
+            {
+                ModelState.AddModelError("", "invalid user");
+                return View(resetPasswordVM);
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, resetPasswordVM.Token, resetPasswordVM.NewPassword);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                return View(resetPasswordVM);
+            }
+            return RedirectToAction(nameof(Login));
+        }
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     } 
 }
