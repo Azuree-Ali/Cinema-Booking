@@ -1,0 +1,227 @@
+﻿@using Cinema.Utilities
+@using Cinema.ViewModels
+@model ApplicationUserVM
+@{
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+} 
+
+<div class="container py-5">
+
+    <div class="mx-auto" style="max-width:900px;">
+
+        <!-- Profile Header -->
+        <div class="bg-primary text-white rounded-4 shadow p-5 mb-4 text-center">
+
+            <div class="mb-3">
+
+                <div class="rounded-circle bg-white text-primary d-inline-flex align-items-center justify-content-center"
+                     style="width:100px;height:100px;">
+
+                    <i class="fas fa-user fa-3x"></i>
+
+                </div>
+
+            </div>
+
+            <h2 class="fw-bold mb-1">
+                @Model.FirstName @Model.LastName
+            </h2>
+
+            <p class="mb-0 opacity-75">
+                @Model.Email
+            </p>
+
+        </div>
+
+        <!-- Update Profile -->
+        <div class="card border-0 shadow rounded-4 mb-4">
+
+            <div class="card-body p-4">
+
+                <h4 class="fw-bold mb-4">
+
+                    <i class="fas fa-user-edit text-primary me-2"></i>
+
+                    Personal Information
+
+                </h4>
+
+                <form asp-action="UpdateUser" method="post">
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger"></div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label asp-for="FirstName"
+                                   class="form-label fw-semibold"></label>
+
+                            <input asp-for="FirstName"
+                                   class="form-control form-control-lg" />
+
+                            <span asp-validation-for="FirstName"
+                                  class="text-danger"></span>
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label asp-for="LastName"
+                                   class="form-label fw-semibold"></label>
+
+                            <input asp-for="LastName"
+                                   class="form-control form-control-lg" />
+
+                            <span asp-validation-for="LastName"
+                                  class="text-danger"></span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label asp-for="Email"
+                               class="form-label fw-semibold"></label>
+
+                        <input asp-for="Email"
+                               readonly
+                               class="form-control form-control-lg bg-light" />
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label asp-for="PhoneNumber"
+                               class="form-label fw-semibold"></label>
+
+                        <input asp-for="PhoneNumber"
+                               class="form-control form-control-lg" />
+
+                        <span asp-validation-for="PhoneNumber"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label asp-for="Address"
+                               class="form-label fw-semibold"></label>
+
+                        <textarea asp-for="Address"
+                                  rows="4"
+                                  class="form-control"></textarea>
+
+                        <span asp-validation-for="Address"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+
+                        <a asp-area="@CD.CUSTOMER_AREA"
+                           asp-controller="Home"
+                           asp-action="Index"
+                           class="btn btn-outline-secondary px-4">
+
+                            <i class="fas fa-arrow-left me-2"></i>
+
+                            Back
+
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-primary px-5">
+
+                            <i class="fas fa-save me-2"></i>
+
+                            Save Changes
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <!-- Change Password -->
+        <div class="card border-0 shadow rounded-4">
+
+            <div class="card-body p-4">
+
+                <h4 class="fw-bold mb-4">
+
+                    <i class="fas fa-lock text-warning me-2"></i>
+
+                    Change Password
+
+                </h4>
+
+                <form asp-action="UpdatePassword">
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger"></div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Current Password
+                            </label>
+
+                            <input type="password"
+                                   asp-for="CurrentPassword"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter current password" />
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-semibold">
+                                New Password
+                            </label>
+
+                            <input type="password"
+                                   asp-for="NewPassword"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter new password" />
+
+                        </div>
+
+                    </div>
+
+                    <div class="text-end">
+
+                        <button type="submit"
+                                class="btn btn-warning px-4">
+
+                            <i class="fas fa-key me-2"></i>
+
+                            Change Password
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+    @* @* <partial name="_NotificationPartial" /> *@
+}
